@@ -3,7 +3,7 @@
 db=mssql
 db-username=sa
 db-password=123456
-db-url=jdbc:sqlserver://192.168.1.142;databaseName=iam-dev;encrypt=true;trustServerCertificate=true
+db-url=jdbc:sqlserver://192.168.1.142;databaseName=erp-manager;encrypt=true;trustServerCertificate=true
 transaction-xa-enabled=false
 
 # Observability

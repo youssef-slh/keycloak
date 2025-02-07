@@ -14,9 +14,10 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_FEATURES: token-exchange,admin-fine-grained-authz
     networks:
       - mynetwork
-    command: ["start", "--hostname-strict=false","--features=token-exchange,admin-fine-grained-authz"]
+    command: ["start", "--hostname-strict=false"]
     restart: always
 
 networks:
