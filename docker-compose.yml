@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.5
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - /home/user/Documents/config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+      - /home/user/Documents/docker/ssl/keycloak.crt:/opt/keycloak/conf/server.crt.pem
+      - /home/user/Documents/docker/ssl/keycloak.pem:/opt/keycloak/conf/server.key.pem
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    networks:
+      - mynetwork
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - /home/user/Documents/config/nginx.conf:/etc/nginx/nginx.conf
+      - /home/user/Documents/app/html:/etc/nginx/html
+    networks:
+      - mynetwork
+    restart: always
+
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    hostname: gdgsapp-vm.dgsg.local
+    ports:
+      - "443:443"
+      - "8081:80"
+      - "222:22"
+    environment:
+      - GITLAB_OMNIBUS_CONFIG=external_url 'http://gdgsapp-vm.dgsg.local'; gitlab_rails['gitlab_email_from'] = 'joe-saleh13@hotmail.com'; gitlab_rails['initial_root_password'] = 'P@ssw0rd';
+    volumes:
+      - /path/to/your/gitlab/config:/etc/gitlab
+      - /path/to/your/gitlab/logs:/var/log/gitlab
+      - /path/to/your/gitlab/data:/var/opt/gitlab
+    networks:
+      - mynetwork
+    restart: always
+
+networks:
+  mynetwork:
+    driver: bridge
