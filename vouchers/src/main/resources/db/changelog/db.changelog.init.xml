@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="t_vouchers_creation" author="youssef.saleh">
+
+
+
+        <!-- CODE Table -->
+        <createTable tableName="CODE">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="nvarchar(255)"/>
+            <column name="description" type="nvarchar(255)"/>
+            <column name="active" type="boolean" defaultValueBoolean="true"/>
+        </createTable>
+
+        <!-- CODE_VALUE Table -->
+        <createTable tableName="CODE_VALUE">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="code_id" type="bigint">
+                <constraints foreignKeyName="fk_code_value" referencedColumnNames="id" referencedTableName="CODE"/>
+            </column>
+            <column name="name" type="nvarchar(255)"/>
+            <column name="description" type="nvarchar(255)"/>
+            <column name="active" type="boolean" defaultValueBoolean="true"/>
+        </createTable>
+
+        <!-- SERVICES Table -->
+        <createTable tableName="SERVICES">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="nvarchar(255)"/>
+            <column name="category_id" type="bigint">
+                <constraints foreignKeyName="fk_service_category" referencedColumnNames="id"
+                             referencedTableName="CODE_VALUE"/>
+            </column>
+            <column name="amount" type="decimal(18,2)"/>
+            <column name="currency" type="varchar(10)"/>
+            <column name="active" type="boolean" defaultValueBoolean="true"/>
+            <column name="client" type="varchar(255)"/>
+        </createTable>
+
+        <!-- VOUCHERS Table -->
+        <createTable tableName="VOUCHERS">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="barcode" type="varchar(100)"/>
+            <column name="external_id" type="bigint"/>
+            <column name="first_name" type="nvarchar(100)"/>
+            <column name="last_name" type="nvarchar(100)"/>
+            <column name="father_name" type="nvarchar(100)"/>
+            <column name="mother_name" type="nvarchar(100)"/>
+            <column name="first_name_ar" type="nvarchar(100)"/>
+            <column name="last_name_ar" type="nvarchar(100)"/>
+            <column name="father_name_ar" type="nvarchar(100)"/>
+            <column name="mother_name_ar" type="nvarchar(100)"/>
+            <column name="phone_number" type="varchar(100)"/>
+            <column name="date_of_birth" type="date"/>
+            <column name="service_id" type="bigint">
+                <constraints foreignKeyName="fk_voucher_service" referencedColumnNames="id"
+                             referencedTableName="SERVICES"/>
+            </column>
+            <column name="amount" type="decimal(18,2)"/>
+            <column name="currency" type="varchar(10)"/>
+            <column name="status" type="varchar(255)"/>
+            <column name="creation_date" type="timestamp"/>
+            <column name="last_update_date" type="timestamp"/>
+        </createTable>
+
+        <!-- VOUCHERS_STATUS_HISTORY Table -->
+        <createTable tableName="VOUCHERS_STATUS_HISTORY">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="voucher_id" type="bigint">
+                <constraints foreignKeyName="fk_voucher_history" referencedColumnNames="id"
+                             referencedTableName="VOUCHERS"/>
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="varchar(255)"/>
+            <column name="reason" type="nvarchar(1000)"/>
+            <column name="creation_date" type="timestamp"/>
+        </createTable>
+
+        <createIndex indexName="idx_code_value_code_id" tableName="CODE_VALUE">
+            <column name="code_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_service_category_id" tableName="SERVICES">
+            <column name="category_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_voucher_history_voucher_id" tableName="VOUCHERS_STATUS_HISTORY">
+            <column name="voucher_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_voucher_service_id" tableName="VOUCHERS">
+            <column name="service_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

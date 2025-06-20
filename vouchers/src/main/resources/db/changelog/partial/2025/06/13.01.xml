@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add_fast_transaction_amount" author="youssef.saleh">
+        <addColumn tableName="services">
+            <column name="fast_transaction_amount" type="decimal(18,2)"/>
+        </addColumn>
+
+        <addColumn tableName="vouchers">
+            <column name="fast_transaction_amount" type="decimal(18,2)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

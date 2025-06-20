@@ -1,0 +1,25 @@
+server:
+  port: 8090
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://localapi.digitalams.net:8443/realms/vouchers-dev
+
+  application:
+    name: vouchers-app
+  datasource:
+      url: jdbc:sqlserver://localhost;databaseName=vouchers-dev;encrypt=true;trustServerCertificate=true
+      username: sa
+      password: 123456
+  jpa:
+    show-sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+logging:
+  level:
+    root: INFO
