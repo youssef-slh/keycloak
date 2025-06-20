@@ -2,23 +2,27 @@ version: '3.8'
 
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0.5
-    container_name: keycloak
-    ports:
-      - "8081:8080"
-      - "8443:8443"
-    volumes:
-      - C:/Users/Administrator/Documents/workspace/keycloak/keycloak.conf:/opt/keycloak/conf/keycloak.conf
-      - C:/Users/Administrator/Documents/workspace/keycloak/ssl/keycloak.crt:/opt/keycloak/conf/server.crt.pem
-      - C:/Users/Administrator/Documents/workspace/keycloak/ssl/keycloak.pem:/opt/keycloak/conf/server.key.pem
+    image: quay.io/keycloak/keycloak:latest # Or a specific version
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    networks:
-      - mynetwork
-    command: ["start", "--hostname-strict=false","--features=token-exchange,admin-fine-grained-authz"]
+      KC_DB: mssql # Or your chosen database
+      KC_DB_URL: jdbc:sqlserver://gateway.docker.internal;databaseName=iam-dev;encrypt=true;trustServerCertificate=true
+      KC_DB_USERNAME: sa
+      KC_DB_PASSWORD: 123456
+      KC_HOSTNAME: localapi.digitalams.net # Crucial for proper redirects and token issuance
+      KC_HTTPS_PORT: 8443 # If using a non-standard HTTPS port
+      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keystore.jks # Path to your JKS file inside the container
+      KC_HTTPS_KEY_STORE_PASSWORD: P@ssw0rd
+      KC_HTTPS_PROTOCOLS: TLSv1.3,TLSv1.2 # Recommended TLS protocols
+      # KC_TRUSTSTORE_FILE: /opt/keycloak/conf/truststore.jks # If you have a separate truststore
+      # KC_TRUSTSTORE_PASSWORD: your_truststore_password
+      KC_HTTP_ENABLED: 'false' # Disable HTTP if you are only using HTTPS
+      KEYCLOAK_ADMIN: admin # Initial admin username
+      KEYCLOAK_ADMIN_PASSWORD: admin # Initial admin password
+    ports:
+      - "8443:8443" # Map container's HTTPS port to host's HTTPS port
+      - "8080:8080" # Optional: if you need to expose HTTP for internal services or initial setup
+    volumes:
+      - ./keycloak.jks:/opt/keycloak/conf/keystore.jks:ro # Mount your JKS file
+      # - ./certs/truststore.jks:/opt/keycloak/conf/truststore.jks:ro # Mount your truststore if used
     restart: always
-
-networks:
-  mynetwork:
-    driver: bridge
+    command: ["start", "--hostname-strict=false","--features=token-exchange,admin-fine-grained-authz,organization"]
